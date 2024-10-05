@@ -1,21 +1,26 @@
 const express = require("express");
-require("dotenv").config();
+require("colors");
 var { createHandler } = require("graphql-http/lib/use/express");
 const expressPlayground =
-  require('graphql-playground-middleware-express').default;
+  require("graphql-playground-middleware-express").default;
 const schema = require("./schema/schema");
-const port = process.env.PORT || 5000;
+const connectDB = require("./config/db");
+const { appConfig } = require("./config");
 
 const app = express();
+const env = app.get("env");
 
+connectDB();
 app.all(
   "/graphql",
   createHandler({
     schema,
   })
 );
-app.get('/playground', expressPlayground({ endpoint: '/graphql' }));
+app.get("/playground", expressPlayground({ endpoint: "/graphql" }));
 
-app.listen(port, () => {
-  console.log("listening on port ", port);
+app.listen(appConfig.PORT, () => {
+  console.log("env", env);
+  console.log("appConfig", appConfig);
+  console.log("listening on port ", appConfig.PORT);
 });
