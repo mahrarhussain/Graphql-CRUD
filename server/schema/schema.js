@@ -5,6 +5,7 @@ const {
   GraphQLSchema,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLEnumType,
 } = require("graphql");
 const { projects, clients } = require("../sampleData");
 const Project = require("../models/Project");
@@ -20,8 +21,6 @@ const ProjectType = new GraphQLObjectType({
     client: {
       type: ClientType,
       resolve(parents, args) {
-        console.log("parents", parents);
-        console.log("args", args);
         return Client.findById(parents.clientId);
       },
     },
@@ -76,11 +75,29 @@ const mutation = new GraphQLObjectType({
     addClient: {
       type: ClientType,
       args: {
-        name: { type: GraphQLNonNull(GraphQLString) },
-        email: { type: GraphQLNonNull(GraphQLString) },
-        phone: { type: GraphQLNonNull(GraphQLString) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        email: { type: new GraphQLNonNull(GraphQLString) },
+        phone: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve(parents, args) {
+        const client = new Client({
+          name: args.name,
+          email: args.email,
+          phone: args.phone,
+        });
+        return client.save();
       },
     },
+
+    deleteClient: {
+      type: ClientType,
+      args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+
+      resolve(parents, args) {
+        return Client.findByIdAndDelete(args.id);
+      },
+    },
+
   },
 });
 
