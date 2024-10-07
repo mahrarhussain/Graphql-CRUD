@@ -63,6 +63,8 @@ const RootQuery = new GraphQLObjectType({
       type: ClientType,
       args: { id: { type: GraphQLID } },
       resolve(parents, args) {
+        console.log("args", args);
+        console.log("parents", parents);
         return Client.findById(args.id);
       },
     },
