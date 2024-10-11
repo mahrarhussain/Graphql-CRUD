@@ -6,11 +6,14 @@ const expressPlayground =
 const schema = require("./schema/schema");
 const connectDB = require("./config/db");
 const { appConfig } = require("./config");
+const cors = require("cors");
 
 const app = express();
 const env = app.get("env");
 
 connectDB();
+
+app.use(cors());
 app.all(
   "/graphql",
   createHandler({
